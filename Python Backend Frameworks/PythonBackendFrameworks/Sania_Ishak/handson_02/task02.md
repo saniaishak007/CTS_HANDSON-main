@@ -1,27 +1,24 @@
-### HANDSON 2 TASK 2 
-# Task 2: Django ORM Queries
-
 """
-Hands-On 2 - Task 2
-Django ORM Queries
+Hands-On 2 - Task 2 Django ORM Queries
 
-Run these commands inside:
+Run inside shell:
 python manage.py shell
-
-Then execute:
 exec(open("handson2_task2.py").read())
 """
 
-```
-from courses.models import Department, Course, Student
+# -----------------------------
+# Imports
+# -----------------------------
+from courses.models import Department, Course, Student, Enrollment
 from django.db.models import Count, F
+from datetime import date
 
 # -----------------------------
 # Create Departments
 # -----------------------------
 cs = Department.objects.create(
     name="Computer Science",
-    head_of_dept="Dr. Kumar",
+    head_of_dept="Dr. Ravi",
     budget=500000
 )
 
@@ -34,28 +31,28 @@ it = Department.objects.create(
 # -----------------------------
 # Create Courses
 # -----------------------------
-Course.objects.create(
+c1 = Course.objects.create(
     name="Python Programming",
     code="CS101",
     credits=4,
     department=cs
 )
 
-Course.objects.create(
+c2 = Course.objects.create(
     name="Data Structures",
     code="CS102",
     credits=4,
     department=cs
 )
 
-Course.objects.create(
+c3 = Course.objects.create(
     name="Web Development",
     code="IT101",
     credits=3,
     department=it
 )
 
-Course.objects.create(
+c4 = Course.objects.create(
     name="Cloud Computing",
     code="IT102",
     credits=4,
@@ -65,7 +62,7 @@ Course.objects.create(
 # -----------------------------
 # Create Students
 # -----------------------------
-Student.objects.create(
+s1 = Student.objects.create(
     first_name="Rahul",
     last_name="Sharma",
     email="rahul@example.com",
@@ -73,7 +70,7 @@ Student.objects.create(
     enrollment_year=2024
 )
 
-Student.objects.create(
+s2 = Student.objects.create(
     first_name="Anjali",
     last_name="Singh",
     email="anjali@example.com",
@@ -81,7 +78,7 @@ Student.objects.create(
     enrollment_year=2024
 )
 
-Student.objects.create(
+s3 = Student.objects.create(
     first_name="Arun",
     last_name="Kumar",
     email="arun@example.com",
@@ -89,7 +86,7 @@ Student.objects.create(
     enrollment_year=2023
 )
 
-Student.objects.create(
+s4 = Student.objects.create(
     first_name="Priya",
     last_name="Ravi",
     email="priya@example.com",
@@ -97,7 +94,7 @@ Student.objects.create(
     enrollment_year=2024
 )
 
-Student.objects.create(
+s5 = Student.objects.create(
     first_name="Karthik",
     last_name="Raj",
     email="karthik@example.com",
@@ -108,28 +105,38 @@ Student.objects.create(
 print("\nDepartments, Courses and Students created successfully.\n")
 
 # -----------------------------
-# Query Courses
+# Create Enrollments
+# -----------------------------
+Enrollment.objects.create(student=s1, course=c1, enrollment_date=date.today(), grade="A")
+Enrollment.objects.create(student=s1, course=c2, enrollment_date=date.today(), grade="B")
+Enrollment.objects.create(student=s2, course=c1, enrollment_date=date.today(), grade="A")
+Enrollment.objects.create(student=s3, course=c3, enrollment_date=date.today(), grade="B")
+Enrollment.objects.create(student=s4, course=c4, enrollment_date=date.today(), grade="A")
+
+print("Enrollments created successfully.\n")
+
+# -----------------------------
+# Query Courses (ForeignKey lookup)
 # -----------------------------
 print("Courses in Computer Science:")
+
 courses = Course.objects.filter(department__name="Computer Science")
 
 for course in courses:
-    print(course.name)
+    print("-", course.name)
 
 # -----------------------------
 # Count Courses per Department
 # -----------------------------
 print("\nCourse Count by Department:")
 
-counts = Department.objects.annotate(
-    course_count=Count("course")
-)
+counts = Department.objects.annotate(course_count=Count("course"))
 
 for dept in counts:
     print(dept.name, "-", dept.course_count)
 
 # -----------------------------
-# select_related()
+# select_related() optimization
 # -----------------------------
 print("\nStudents with Departments:")
 
@@ -139,7 +146,7 @@ for student in students:
     print(student.first_name, "-", student.department.name)
 
 # -----------------------------
-# Update Budget
+# Update Budget (F expression)
 # -----------------------------
 Department.objects.update(
     budget=F("budget") * 1.10
@@ -148,8 +155,5 @@ Department.objects.update(
 print("\nDepartment budgets increased by 10%.")
 
 print("\nHands-On 2 Task 2 Completed Successfully.")
-```
 
-# output :
-
-<img width="1188" height="1020" alt="image" src="https://github.com/user-attachments/assets/94822a8f-37a4-445c-8860-1ff1326a0d45" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2a62e348-d293-4305-a728-c632c8ee0b74" />
